@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation, useHistory } from 'react-router-dom'
 import { Layout, Menu } from 'antd'
 import {
   UserOutlined,
@@ -22,10 +22,11 @@ const { Sider } = Layout
 function SideMenu(props) {
 
   const [menuData, setMenuData] = useState([])
+  const location = useLocation().pathname
+  const openKeys = ['/' + useLocation().pathname.split('/')[1]]
 
   useEffect(() => {
     axios.get('http://localhost:5050/rights?_embed=children').then(res => {
-      console.log(res.data);
       setMenuData(res.data)
     })
   }, [])
@@ -73,11 +74,12 @@ function SideMenu(props) {
     <Sider trigger={null} collapsible collapsed={false}>
       <div style={{ display: "flex", height: "100%", "flexDirection": "column" }}>
         <div className="logo">全球新闻发布管理系统</div>
-        <div style={{flex: 1, "overflow": "auto"}}>
+        <div style={{ flex: 1, "overflow": "auto" }}>
           <Menu
             theme="dark"
             mode="inline"
-            defaultSelectedKeys={['1']}
+            selectedKeys={location}
+            defaultOpenKeys={openKeys}
             items={renderMenu(menuData)}
             onClick={(e) => {
               navigate(e.key)
