@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import {
   MenuFoldOutlined,
-  SmileOutlined,
   UserOutlined
 } from '@ant-design/icons';
-import { Layout, Dropdown, Menu, Avatar } from 'antd';
+import { Layout, Dropdown, Avatar } from 'antd';
 const { Header } = Layout;
 
 function TopHeader() {
@@ -12,7 +11,6 @@ function TopHeader() {
   const [collapsed, setCollapsed] = useState(false)
   const changeCollapsed = () => {
     setCollapsed(!collapsed)
-    console.log(111);
   }
 
   const items = [

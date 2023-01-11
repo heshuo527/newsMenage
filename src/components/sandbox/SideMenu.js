@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useLocation, useHistory } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Layout, Menu } from 'antd'
 import {
   UserOutlined,
-  ProjectOutlined,
-  AppstoreOutlined,
   MailOutlined,
-  SettingOutlined,
   SolutionOutlined,
   SwitcherOutlined,
   UserAddOutlined,
