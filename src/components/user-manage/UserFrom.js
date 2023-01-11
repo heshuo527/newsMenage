@@ -1,10 +1,15 @@
-import React, { forwardRef, useState } from 'react'
+import React, { forwardRef, useEffect, useState } from 'react'
 import { Form, Select, Input } from 'antd'
 
 const UserFrom = forwardRef((props, ref) => {
 
     const [isDisabled, setIsDisabled] = useState(false)
-    const { roleList, regionList } = props
+
+    const { roleList, regionList, isUpdateDisabled } = props
+
+    useEffect(() => {
+        setIsDisabled(isUpdateDisabled)
+    }, [isUpdateDisabled])
     return (
         <Form
             ref={ref}
@@ -37,7 +42,7 @@ const UserFrom = forwardRef((props, ref) => {
             <Form.Item
                 name="region"
                 label="区域"
-                rules={isDisabled ? [] : [{required: true, message:"Please input the title of collection!"}]}
+                rules={isDisabled ? [] : [{ required: true, message: "Please input the title of collection!" }]}
             >
                 <Select
                     disabled={isDisabled}

@@ -11,29 +11,18 @@ function UserList() {
   const [dataSource, setDataSource] = useState([])
   const [isAddVisible, setIsAddVisible] = useState(false)
   const [isUpdateVisible, setIsUpdateVisible] = useState(false)
+  const [isUpdateDisabled, setIsUpdateDisabled] = useState(false)
   const [roleList, setRoleList] = useState([])
   const [regionList, setRegionList] = useState([])
   const addFrom = useRef(null)
   const updateFrom = useRef(null)
 
-  const showConfirm = (item) => {
-    confirm({
-      title: '你确定要删除吗?',
-      icon: <ExclamationCircleFilled />,
-      // content: 'Some descriptions',
-      onOk() {
-        deleteMethod(item)
-      },
-      onCancel() {
-        console.log('Cancel');
-      },
-    });
-  };
-  const deleteMethod = (item) => {
-    setDataSource(dataSource.filter(data => data.id !== item.id))
-
-    axios.delete(`http://localhost:5050/users/${item.id}`)
-  }
+  useEffect(() => {
+    axios.get('http://localhost:5050/users?_expand=role').then(res => {
+      const list = res.data
+      setDataSource(list)
+    })
+  }, [])
 
   useEffect(() => {
     axios.get('http://localhost:5050/regions').then(res => {
@@ -41,38 +30,13 @@ function UserList() {
       setRegionList(list)
     })
   }, [])
+
   useEffect(() => {
     axios.get('http://localhost:5050/roles').then(res => {
       const list = res.data
       setRoleList(list)
     })
   }, [])
-  useEffect(() => {
-    axios.get('http://localhost:5050/users').then(res => {
-      const list = res.data
-      setDataSource([...list])
-    })
-  }, [])
-
-  const handleUpdate = (item) => {
-    console.log(item);
-    setTimeout(() => {
-      setIsUpdateVisible(true)
-      updateFrom.current?.setFieldsValue(item)
-    }, 0);
-  }
-
-  const handleChange = (item) => {
-    item.roleState = !item.roleState
-    setDataSource([...dataSource])
-    axios.patch(`http://localhost:5050/users/${item.id}`, {
-      roleState: item.roleState
-    })
-  }
-
-  const updateFromOk = () => {
-
-  }
 
   const columns = [
     {
@@ -104,6 +68,45 @@ function UserList() {
     }
   ];
 
+  const handleUpdate = (item) => {
+    setIsUpdateVisible(true)
+    setTimeout(() => {
+      if (item.roleId === 1) {
+        setIsUpdateDisabled(true)
+      } else {
+        setIsUpdateDisabled(false)
+      }
+      updateFrom.current.setFieldsValue(item)
+    }, 0);
+  }
+
+  const handleChange = (item) => {
+    item.roleState = !item.roleState
+    setDataSource([...dataSource])
+    axios.patch(`http://localhost:5050/users/${item.id}`, {
+      roleState: item.roleState
+    })
+  }
+
+  const showConfirm = (item) => {
+    confirm({
+      title: '你确定要删除吗?',
+      icon: <ExclamationCircleFilled />,
+      // content: 'Some descriptions',
+      onOk() {
+        deleteMethod(item)
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
+
+  const deleteMethod = (item) => {
+    setDataSource(dataSource.filter(data => data.id !== item.id))
+    axios.delete(`http://localhost:5050/users/${item.id}`)
+  }
+
   const addFromOk = () => {
     addFrom.current.validateFields().then(value => {
       setIsAddVisible(false)
@@ -115,13 +118,16 @@ function UserList() {
       }).then(res => {
         setDataSource([...dataSource, {
           ...res.data,
-          role: roleList
-            .filter(item => item.id === value.roleId)[0]
+          role: roleList.filter(item => item.id === value.roleId)[0]
         }])
       })
     }).catch(err => {
       console.log(err);
     })
+  }
+
+  const updateFromOk = () => {
+
   }
 
   return (
@@ -156,10 +162,11 @@ function UserList() {
         cancelText="取消"
         onCancel={() => {
           setIsUpdateVisible(false)
+          setIsUpdateDisabled(!isUpdateDisabled)
         }}
         onOk={() => updateFromOk()}
       >
-        <UserFrom regionList={regionList} roleList={roleList} ref={updateFrom} />
+        <UserFrom regionList={regionList} roleList={roleList} ref={updateFrom} isUpdateDisabled={isUpdateDisabled} />
       </Modal>
     </>
   )
