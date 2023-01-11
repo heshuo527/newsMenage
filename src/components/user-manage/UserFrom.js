@@ -5,7 +5,6 @@ const UserFrom = forwardRef((props, ref) => {
 
     const [isDisabled, setIsDisabled] = useState(false)
     const { roleList, regionList } = props
-    console.log(ref);
     return (
         <Form
             ref={ref}

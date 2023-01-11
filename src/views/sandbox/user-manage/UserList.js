@@ -10,9 +10,11 @@ function UserList() {
 
   const [dataSource, setDataSource] = useState([])
   const [isAddVisible, setIsAddVisible] = useState(false)
+  const [isUpdateVisible, setIsUpdateVisible] = useState(false)
   const [roleList, setRoleList] = useState([])
   const [regionList, setRegionList] = useState([])
   const addFrom = useRef(null)
+  const updateFrom = useRef(null)
 
   const showConfirm = (item) => {
     confirm({
@@ -52,6 +54,26 @@ function UserList() {
     })
   }, [])
 
+  const handleUpdate = (item) => {
+    console.log(item);
+    setTimeout(() => {
+      setIsUpdateVisible(true)
+      updateFrom.current?.setFieldsValue(item)
+    }, 0);
+  }
+
+  const handleChange = (item) => {
+    item.roleState = !item.roleState
+    setDataSource([...dataSource])
+    axios.patch(`http://localhost:5050/users/${item.id}`, {
+      roleState: item.roleState
+    })
+  }
+
+  const updateFromOk = () => {
+
+  }
+
   const columns = [
     {
       title: '区域',
@@ -70,14 +92,14 @@ function UserList() {
     {
       title: '用户状态',
       dataIndex: 'roleState',
-      render: (roleState, item) => <Switch disabled={item.default} checked={roleState}></Switch>
+      render: (roleState, item) => <Switch disabled={item.default} checked={roleState} onChange={() => handleChange(item)}></Switch>
     },
     {
       title: '操作',
       render: (item) =>
         <>
           <Button disabled={item.default} onClick={() => showConfirm(item)} danger shape="circle" icon={<DeleteOutlined />} />
-          <Button disabled={item.default} type="primary" shape="circle" icon={<EditOutlined />} />
+          <Button disabled={item.default} type="primary" shape="circle" icon={<EditOutlined />} onClick={() => handleUpdate(item)} />
         </>
     }
   ];
@@ -121,11 +143,23 @@ function UserList() {
         okText="确定"
         cancelText="取消"
         onCancel={() => {
-          setIsAddVisible(true)
+          setIsAddVisible(false)
         }}
         onOk={() => addFromOk()}
       >
         <UserFrom regionList={regionList} roleList={roleList} ref={addFrom} />
+      </Modal>
+      <Modal
+        open={isUpdateVisible}
+        title="更新用户"
+        okText="更新"
+        cancelText="取消"
+        onCancel={() => {
+          setIsUpdateVisible(false)
+        }}
+        onOk={() => updateFromOk()}
+      >
+        <UserFrom regionList={regionList} roleList={roleList} ref={updateFrom} />
       </Modal>
     </>
   )
