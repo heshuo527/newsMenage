@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import {
   MenuFoldOutlined,
   UserOutlined
@@ -8,6 +9,10 @@ const { Header } = Layout;
 
 function TopHeader() {
 
+  const navigate = useNavigate()
+  const location = useLocation()
+  console.log('location', location);
+
   const [collapsed, setCollapsed] = useState(false)
   const changeCollapsed = () => {
     setCollapsed(!collapsed)
@@ -16,6 +21,7 @@ function TopHeader() {
   const items = [
     {
       key: '1',
+      onClick: () => { console.log(1) },
       label: (
         '超级管理'
       ),
@@ -23,16 +29,16 @@ function TopHeader() {
     {
       key: '2',
       danger: true,
+      onClick: () => {
+        localStorage.removeItem("token")
+        navigate('/login')
+      },
       label: '退出',
     },
   ];
 
   return (
     <Header className="site-layout-background" style={{ padding: 0 }}>
-      {/* {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-        className: 'trigger',
-        onClick: () => setCollapsed(!collapsed),
-      })} */}
       {
         collapsed ? <MenuFoldOutlined onClick={changeCollapsed} /> : <MenuFoldOutlined onClick={changeCollapsed} />
       }
@@ -40,7 +46,7 @@ function TopHeader() {
         <span>
           欢迎admin回来
         </span>
-        <Dropdown menu={{ items }}>
+        <Dropdown menu={{ items }} >
           <Avatar size={32} icon={<UserOutlined />} />
         </Dropdown>
       </div>

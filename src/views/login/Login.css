@@ -1,0 +1,26 @@
+.login-container {
+    position: fixed;
+    background-color: rgb(0, 0, 0, .7);
+    width: 500px;
+    height: 330px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+}
+
+.login-title {
+    text-align: center;
+    height: 80px;
+    line-height: 80px;
+    font-size: 30px;
+    color: white;
+}
+
+.login-fromItem label {
+    color: white !important;
+}
+
+/* .login-button {
+    margin-top: 10px;
+} */

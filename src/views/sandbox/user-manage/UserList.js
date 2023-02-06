@@ -14,6 +14,7 @@ function UserList() {
   const [isUpdateDisabled, setIsUpdateDisabled] = useState(false)
   const [roleList, setRoleList] = useState([])
   const [regionList, setRegionList] = useState([])
+  const [current, setCurrent] = useState(null)
   const addFrom = useRef(null)
   const updateFrom = useRef(null)
 
@@ -42,6 +43,22 @@ function UserList() {
     {
       title: '区域',
       dataIndex: 'region',
+      filters: [
+        ...regionList.map(item => ({
+          text: item.title,
+          value: item.value
+        })),
+        {
+          text: '全球',
+          value: '全球'
+        }
+      ],
+      onFilter: (value, item) => {
+        if (value === '全球') {
+          return item.region === ''
+        }
+        return item.region === value
+      },
       render: region => <b>{region === "" ? '全球' : region}</b>
     },
     {
@@ -77,7 +94,8 @@ function UserList() {
         setIsUpdateDisabled(false)
       }
       updateFrom.current.setFieldsValue(item)
-    }, 0);
+    }, 0)
+    setCurrent(item)
   }
 
   const handleChange = (item) => {
@@ -127,7 +145,22 @@ function UserList() {
   }
 
   const updateFromOk = () => {
+    updateFrom.current.validateFields().then(value => {
+      setIsUpdateVisible(false)
+      setDataSource(dataSource.map(item => {
+        if (item.id === current.id) {
+          return {
+            ...item,
+            ...value,
+            role: roleList.filter(data => data.id === value.roleId)[0]
+          }
+        }
+        return item
+      }))
+      setIsUpdateDisabled(!isUpdateDisabled)
 
+      axios.patch(`http://localhost:5050/users/${current.id}`, value)
+    })
   }
 
   return (
