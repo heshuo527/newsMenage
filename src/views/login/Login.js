@@ -1,12 +1,22 @@
 import React from 'react'
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Checkbox, Form, Input, message } from 'antd';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom'
 import './Login.css'
 
-function Login(props) {
-  console.log(props);
+function Login() {
 
+  const navigate = useNavigate()
   const onFinish = (values) => {
-    console.log('Success登录成功:', values);
+    axios.get(`http://localhost:5050/users?username=${values.username}&password=${values.password}&roleState=true&_expand=role`).then(res => {
+      console.log(res.data);
+      if (res.data.length === 0) {
+        message.error('用户名或密码不匹配')
+      } else {
+        localStorage.setItem('token', JSON.stringify(res.data[0]))
+        navigate('/')
+      }
+    })
   };
   const onFinishFailed = (errorInfo) => {
     console.log('Failed登录失败:', errorInfo);

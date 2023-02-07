@@ -11,19 +11,19 @@ function TopHeader() {
 
   const navigate = useNavigate()
   const location = useLocation()
-  console.log('location', location);
 
   const [collapsed, setCollapsed] = useState(false)
   const changeCollapsed = () => {
     setCollapsed(!collapsed)
   }
 
+  const { role: { roleName }, username } = JSON.parse(localStorage.getItem('token'))
   const items = [
     {
       key: '1',
       onClick: () => { console.log(1) },
       label: (
-        '超级管理'
+        `${roleName}`
       ),
     },
     {
@@ -44,7 +44,7 @@ function TopHeader() {
       }
       <div style={{ float: "right" }}>
         <span>
-          欢迎admin回来
+          欢迎{username}回来
         </span>
         <Dropdown menu={{ items }} >
           <Avatar size={32} icon={<UserOutlined />} />
